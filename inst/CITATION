@@ -1,0 +1,8 @@
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Article",
+	journal = "Ecology",
+         title = "Detecting cyclicity in ecological time series",
+         author = c(person("Stilianos", "Louca"),
+                    person("Michael", "Doebeli")),
+         year = "in review")
