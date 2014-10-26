@@ -1,14 +1,14 @@
 mlfit_ouss <-
-function(frequencies, periodogram, time_step, startRadius=2, iterations=100){
-	power_e_scales		= mean(tail(periodogram,n=3));		# first guess for power_e
+function(frequencies, periodogram, time_step, series_size, startRadius=10, iterations=200){
+	power_e_scales		= mean(tail(periodogram,n=min(5,length(periodogram))));		# first guess for power_e
 	powerInt 			= aux_trapezoid(frequencies, periodogram); 	# total (integrated) power in signal
-	power_o_scales 		= mean(periodogram[1:3]);			# first guess for power_o
+	power_o_scales 		= mean(periodogram[1:min(5,length(periodogram))]);			# first guess for power_o
 	lambda_scales 		= 4*powerInt/power_o_scales;	# first guess for lambda	
 	
 	# Define a grid of starting points for the fitting
 	startRadius			= abs(startRadius);
-	suspected_power_o 	= (10^(-startRadius:startRadius)) * power_o_scales;	# try out a range of start values for the fit
-	suspected_lambda 	= (10^(-startRadius:startRadius)) * lambda_scales; 	# try out a range of start values for the fit
+	suspected_power_o 	= (4^(-startRadius:startRadius)) * power_o_scales;	# try out a range of start values for the fit
+	suspected_lambda 	= (4^(-startRadius:startRadius)) * lambda_scales; 	# try out a range of start values for the fit
 	suspected_power_e	= c(power_e_scales);	# power_e is a uniform translation parameter and so very easy to deal with by the optimizer
 	
 	# Go through all these starting points and attempt fit. Will choose the best fit at the end.
@@ -24,8 +24,8 @@ function(frequencies, periodogram, time_step, startRadius=2, iterations=100){
 										method="BFGS",
 										control=list(	fnscale=+1,
 														parscale=c(sqrt(power_o_scales),lambda_scales,sqrt(power_e_scales)), 
-														maxit=iterations, reltol=1e-5),
-										frequencies=frequencies, powers=periodogram, time_step=time_step), 
+														maxit=iterations, reltol=1e-6),
+										frequencies=frequencies, powers=periodogram, time_step=time_step, series_size=series_size), 
 							silent=TRUE);
 				if(!("try-error" %in% class(ML)) && (ML$convergence==0)){
 					ML_value 	= c(ML_value, ML$value);	# note that ML_value is actually the negated maximum log-likelihood
@@ -53,7 +53,7 @@ function(frequencies, periodogram, time_step, startRadius=2, iterations=100){
 	}
 	
 	return(list(error			=FALSE,
-				errorMessage	="",
+				errorMessage	= "",
 				power_o			= fitted_power_o, 
 				lambda			= fitted_lambda,
 				power_e			= fitted_power_e,

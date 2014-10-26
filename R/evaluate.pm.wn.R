@@ -2,8 +2,8 @@ evaluate.pm.wn <-
 function(times, signal, minPeakFreq=0, minFitFreq=0){
 	# Calculate Lomb-Scargle periodogram from time series
 	spectrum 	= LombScarglePeriodogram(times, signal);
-	frequencies	= spectrum$freq;
-	powers		= spectrum$spec;
+	frequencies	= spectrum$frequencies;
+	powers		= spectrum$powers;
 	frequencies = frequencies[-1]; 		#discard zero-frequency mode
 	powers	 	= powers[-1]; 			#discard zero-frequency mode
 	if(tail(frequencies,n=1)<minPeakFreq) return(list(error=TRUE, errorMessage="All periodogram frequencies are below minPeakFreq"));

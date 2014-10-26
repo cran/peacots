@@ -1,43 +1,60 @@
+# Use multilinear interpolation on D-dimensional grid
+# very inefficient, since grid is re-constructed for every interpolation request
+# grid dimension (D) is inferred from length(location)
 interpolateWithinGrid <-
-function(grid_string, x, y, default_z){
-	# create grid
-	parts 		= strsplit(grid_string,split=",",fixed=TRUE);
-	x_values 	= as.numeric(strsplit(parts[[1]][1],split=" ",fixed=TRUE)[[1]]);
-	y_values 	= as.numeric(strsplit(parts[[1]][2],split=" ",fixed=TRUE)[[1]]);
-	z_values 	= as.numeric(strsplit(parts[[1]][3],split=" ",fixed=TRUE)[[1]]);
-	NX 			= length(x_values);
-	NY 			= length(y_values);
-	NZ			= length(z_values);
-	if(length(z_values)!=NX*NY){
-		cat(sprintf("ERROR parsing grid string: NX=%d, NY=%d but NZ=%d != NX*NY=%d\n",NX,NY,NZ,NX*NY));
-		return(0);
+function(	grid_string, 	# pre-computed string representing rectangular D-dimensional grid. Of format <list of x1 values>,<list of x2 values>,..,<list of xD values>,<list of z values in row-major format>   where each list is space-delimited and must be strictly increasing
+			location, 		# new location at which to interpolate (vector of size D)
+			default_z){		# value to use if requested location is outside of grid domain. If NULL, flat extrapolation is done (i.e. closest grid value is returned)
+	# parse grid
+	D 			= length(location);
+	parts 		= strsplit(grid_string,split="[[:space:]]*,{1}[[:space:]]*",fixed=FALSE)[[1]];
+	grid_points	= lapply(parts[1:D], FUN=function(p){ as.numeric(strsplit(p,split="[[:space:]]+",fixed=FALSE)[[1]]) } );
+	z_values 	= as.numeric(strsplit(parts[D+1],split="[[:space:]]+",fixed=FALSE)[[1]]);
+	N			= sapply(grid_points, length);
+	if(length(z_values)!=prod(N)){
+		stop(sprintf("ERROR parsing grid string: Grid size = %d = %s, but found %d z-values\n",prod(N),paste(as.character(N),collapse=' x '), length(z_values)));
 	}
 	EPSILON		= 1e-5; # relative grid tolerance, mainly to circumvent rounding errors
 	
-	# find enclosing grid box
-	if((!isInRange(x_values[1],x_values[NX],x,EPSILON)) || (!isInRange(y_values[1],y_values[NY],y,EPSILON))) return(default_z);
-	x_du = x + abs(x)*EPSILON;
-	x_dd = x - abs(x)*EPSILON;
-	y_du = y + abs(y)*EPSILON;
-	y_dd = y - abs(y)*EPSILON;
-	for(xi in 2:NX){
-		if(x_values[xi-1]<=x_du && x_values[xi]>=x_dd){ xi2 = xi; break; }
+	if(any(N==0)){ return(default_z); } # no grid available. Returned default_z (even if NULL)
+	location_du = location + abs(location)*EPSILON;
+	location_dd = location - abs(location)*EPSILON;
+	enclosing_box = sapply(c(1:D), FUN = function(d){ 
+											if(location[d]<grid_points[[d]][1]){ return(0); }
+											else if(location[d]>grid_points[[d]][N[d]]){ return(N[d]+1); }
+											else{
+												if(N[d]==1){
+													return(0);
+												}else{
+													for(i in 2:(N[d])){ 
+														if(grid_points[[d]][i-1]<=location_du[d] && grid_points[[d]][i]>=location_dd[d]){ return(i-1); } 
+													}
+													return(0); 
+												}
+											} 
+										});
+	if(!is.null(default_z)){
+		if(any(enclosing_box<=0 | enclosing_box>N)) return(default_z);
 	}
-	for(yi in 2:NY){
-		if(y_values[yi-1]<=y_du && y_values[yi]>=y_dd){ yi2 = yi; break; }
-	}
-	x1 = x_values[xi2-1];
-	x2 = x_values[xi2];
-	y1 = y_values[yi2-1];
-	y2 = y_values[yi2];
-	z11 = z_values[(xi2-2)*NY + (yi2-1)];
-	z12 = z_values[(xi2-2)*NY + yi2];
-	z21 = z_values[(xi2-1)*NY + (yi2-1)];
-	z22 = z_values[(xi2-1)*NY + yi2];
+	box_volume_fractions = sapply(c(1:D), FUN = function(d){ 
+													if(enclosing_box[d]<=0 | enclosing_box[d]>N[d]){ return(0); }
+													else{ return((location[d]-grid_points[[d]][enclosing_box[d]])/(grid_points[[d]][enclosing_box[d]+1] - grid_points[[d]][enclosing_box[d]])); }
+												});
 	
-	# interpolate bilinearly
-	tz1 = z11*(x2-x)/(x2-x1) + z21*(x-x1)/(x2-x1);
-	tz2 = z12*(x2-x)/(x2-x1) + z22*(x-x1)/(x2-x1);
-	z = tz1*(y2-y)/(y2-y1) + tz2*(y-y1)/(y2-y1);
+	Nvertices = 2^D;
+	z = 0;
+	for(v in 0:(Nvertices-1)){
+		vertex_index = 1; vertex_index_factor = 1;
+		vertex_binary = as.numeric(intToBits(v)); vertex_binary = vertex_binary[1:D];
+		vertex_weight = prod(sapply(1:D, FUN = function(d){ if(vertex_binary[d]==0){ return(1-box_volume_fractions[d]); }else{ return(box_volume_fractions[d]); } } ));
+		for(d in D:1){
+			if(enclosing_box[d]<=0){ vertex_index = vertex_index + 0; }
+			else if(enclosing_box[d]>N[d]){ vertex_index = vertex_index + (N[d]-1)*vertex_index_factor; }
+			else if(vertex_binary[d]==0){ vertex_index = vertex_index + (enclosing_box[d]-1)*vertex_index_factor; }
+			else{ vertex_index = vertex_index + enclosing_box[d]*vertex_index_factor; }
+			vertex_index_factor = vertex_index_factor * N[d];
+		}
+		z = z + z_values[vertex_index] * vertex_weight;
+	}
 	return(z);
 }

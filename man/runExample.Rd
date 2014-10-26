@@ -23,6 +23,7 @@ Stilianos Louca
 \code{\link{evaluate.pm}}, \code{\link{plotReport}}, \code{\link{generate_ouss}}
 }
 \examples{
+  # this might take a few seconds
   runExample();
 }
 

@@ -12,8 +12,8 @@ Calculate the periodogram of a time series, maximum-likelihood fit an Ornstein-U
 \tabular{ll}{
 Package: \tab peacots\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2014-06-03\cr
+Version: \tab 1.1\cr
+Date: \tab 2014-10-26\cr
 License: \tab GPL-3\cr
 }
 The OUSS is a parsimonious model for a stochastically fluctuating variable (e.g. population size) with linear stabilizing forces, subject to uncorrelated measurement errors. Periodogram peaks (putative periodicities) are evaluated against this null hypothesis. In contrast to the white noise null model (the classical null model against which cyclicity is often evaluated), the OUSS process accounts for non-zero correlations between measurements and corrects for the resulting increased power at low frequencies.
@@ -28,7 +28,9 @@ Use \code{\link{runExample}} to run an example \code{peacots} analysis based on 
 
 Use \code{\link{evaluate.pm.wn}} to evaluate the statistical significance of the periodogram maximum against the white noise null hypothesis. This is the classical test, included for comparison.
 
-Use \code{\link{ps_ouss}} to calculate the power spectrum of a particular OUSS process.
+Use \code{\link{ps_ouss_asymptotic}} to calculate the power spectrum of a particular OUSS process.
+
+Use \code{\link{ps_ouss}} to calculate the expected periodogram from a finite time series of a particular OUSS process.
 
 Use \code{\link{generate_ouss}} to generate random time series of a particular OUSS process.
 }
@@ -46,8 +48,8 @@ Louca, S., Doebeli, M. - Detecting cyclicity in ecological time series (in revie
 # Parameters
 lambda         = 1;    # inverse correlation time of OU process
 cyclePeriod    = 1;
-cycleAmplitude = 0.75;
-times          = seq(0,20,0.2);
+cycleAmplitude = 0.6;
+times          = seq(0,20,0.25);
 
 # Example 1
 
@@ -60,7 +62,8 @@ signal 	= cycleAmplitude * cos(2*pi*times/cyclePeriod) +
 # to avoid masking by low-frequency maximum
 report 	= evaluate.pm(times=times, signal=signal, 
                       minPeakFreq=lambda/3, 
-                      minFitFreq=lambda/3);
+                      minFitFreq=lambda/3,
+                      startRadius=2);
 
 # plot overview of periodogram peak analysis
 plotReport(sprintf("Cyclic at frequency \%.2g",1/cyclePeriod), 
@@ -73,19 +76,20 @@ plotReport(sprintf("Cyclic at frequency \%.2g",1/cyclePeriod),
 # and estimate its 'local' statistical significance
 
 # calculate periodogram and fit OUSS model
-report    = evaluate.pm(times=times, signal=signal);
+report    = evaluate.pm(times=times, signal=signal, startRadius=2);
 
 # find the periodogram mode approximately corresponding to the frequency we are interested in
 cycleMode = which(report$frequencies>=0.99/cyclePeriod)[1];
 
 # calculate local P-value for this peak
-Pvalue    = significanceOfLocalPeak(power_o   = report$power_o, 
-                                    lambda    = report$lambda, 
-                                    power_e   = report$power_e, 
-                                    time_step = report$time_step, 
-                                    Nfreq     = length(report$frequencies), 
-                                    peakFreq  = report$frequencies[cycleMode], 
-                                    peakPower = report$periodogram[cycleMode]);
+Pvalue    = significanceOfLocalPeak(power_o     = report$power_o, 
+                                    lambda      = report$lambda, 
+                                    power_e     = report$power_e, 
+                                    time_step   = report$time_step,
+                                    series_size = length(times),
+                                    Nfreq       = length(report$frequencies), 
+                                    peakFreq    = report$frequencies[cycleMode], 
+                                    peakPower   = report$periodogram[cycleMode]);
 
 # print result
 cat(sprintf("Local P-value = \%.3g for peak at frequency=\%.3g\n", 

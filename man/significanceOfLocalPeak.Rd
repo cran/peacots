@@ -8,7 +8,8 @@ Statistical significance of local periodogram peaks
 Calculate statistical significance for a secondary periodogram peak (i.e. a non-global periodogram maximum), based on the null hypothesis of an OUSS process.
 }
 \usage{
-significanceOfLocalPeak(power_o, lambda, power_e, time_step, 
+significanceOfLocalPeak(power_o, lambda, power_e, 
+                        time_step, series_size,
                         Nfreq, peakFreq, peakPower)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -25,6 +26,9 @@ significanceOfLocalPeak(power_o, lambda, power_e, time_step,
   \item{time_step}{
     Positive number. The time step of the time series that was used to calculate the periodogram.
 }
+  \item{series_size}{
+    Positive integer. The size of the time series for which the periodogram peak was calculated.
+}
   \item{Nfreq}{
     The number of frequencies from which the local periodogram peak was picked. Typically equal to the number of frequencies in the periodogram.
 }
@@ -36,7 +40,7 @@ significanceOfLocalPeak(power_o, lambda, power_e, time_step,
 }
 }
 \details{
-The OUSS parameters \code{power_o}, \code{lambda} and \code{power_e} will typically be maximum-likelihood fitted values returned by \code{\link{evaluate.pm}}. \code{time_step} is also returned by \code{evaluate.pm} and is inferred from the analysed time series. The examined periodogram peak (as defined by \code{peakFreq}) will typically be a secondary peak of interest, masked by other stronger peaks or a low-frequency maximum. The significance of such a peak is not defined by standard tests.
+The OUSS parameters \code{power_o}, \code{lambda} and \code{power_e} will typically be maximum-likelihood fitted values returned by \code{\link{evaluate.pm}}. The \code{time_step} is also returned by \code{evaluate.pm} and is inferred from the analysed time series. The examined periodogram peak (as defined by \code{peakFreq}) will typically be a secondary peak of interest, masked by other stronger peaks or a low-frequency maximum. The significance of such a peak is not defined by standard tests.
 }
 \value{
 The returned P-value (referred to as ``local P-value'') is the probability that an OUSS process with the specified parameters would generate a periodogram with a power-to-expectation ratio greater than \code{peakPower/E}, where \code{E} is the power spectrum of the OUSS process at frequency \code{peakFreq}. Hence, the significance is a measure for how much the peak power deviates from its expectation. The calculated value is an approximation. It becomes exact for long regular time series.
@@ -62,11 +66,11 @@ If the investigated periodogram peak is a global maximum, then the P-value retur
   # masked by a strong low-frequency maximum.
   # We will use significanceOfLocalPeak() to evaluate its significance
   # based on its deviation from the expected power.
-	
+  
   # generate cyclic time series by adding a periodic signal to an OUSS process
   period    = 1;
   times     = seq(0,20,0.2);
-  signal    = 0.75 * cos(2*pi*times/period) +
+  signal    = 0.5 * cos(2*pi*times/period) +
               generate_ouss(times, mu=0, sigma=1, lambda=1, epsilon=0.5);
   
   # calculate periodogram and fit OUSS model
@@ -77,13 +81,14 @@ If the investigated periodogram peak is a global maximum, then the P-value retur
   cycleMode = which(report$frequencies>=0.99/period)[1]; 
 	
   # calculate P-value for local peak
-  Pvalue    = significanceOfLocalPeak(power_o   = report$power_o, 
-                                      lambda    = report$lambda, 
-                                      power_e   = report$power_e, 
-                                      time_step = report$time_step, 
-                                      Nfreq     = length(report$frequencies), 
-                                      peakFreq  = report$frequencies[cycleMode], 
-                                      peakPower = report$periodogram[cycleMode]);
+  Pvalue    = significanceOfLocalPeak(power_o     = report$power_o, 
+                                      lambda      = report$lambda, 
+                                      power_e     = report$power_e, 
+                                      time_step   = report$time_step, 
+                                      series_size = length(times),
+                                      Nfreq       = length(report$frequencies), 
+                                      peakFreq    = report$frequencies[cycleMode], 
+                                      peakPower   = report$periodogram[cycleMode]);
 
   # plot time series
   old.par <- par(mfrow=c(1, 2));

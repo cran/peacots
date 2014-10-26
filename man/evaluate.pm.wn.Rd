@@ -58,7 +58,7 @@ Stilianos Louca
 }
 \examples{
 # generate time series
-times  = seq(0,10,0.1);
+times  = seq(0,20,0.25);
 signal = rnorm(n=length(times));
 report = evaluate.pm.wn(times=times, signal=signal);
 

@@ -1,1 +1,1 @@
-export(evaluate.pm,plotReport,significanceOfLocalPeak,runExample,evaluate.pm.wn,ps_ouss,generate_ouss)
+export(evaluate.pm,plotReport,significanceOfLocalPeak,runExample,evaluate.pm.wn,ps_ouss,ps_ouss_asymptotic,generate_ouss)
