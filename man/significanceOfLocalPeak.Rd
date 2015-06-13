@@ -46,7 +46,7 @@ The OUSS parameters \code{power_o}, \code{lambda} and \code{power_e} will typica
 The returned P-value (referred to as ``local P-value'') is the probability that an OUSS process with the specified parameters would generate a periodogram with a power-to-expectation ratio greater than \code{peakPower/E}, where \code{E} is the power spectrum of the OUSS process at frequency \code{peakFreq}. Hence, the significance is a measure for how much the peak power deviates from its expectation. The calculated value is an approximation. It becomes exact for long regular time series.
 }
 \references{
-Louca, S., Doebeli, M. - Detecting cyclicity in ecological time series (in review, as of June 2014)
+Louca, S., Doebeli, M. (2015) Detecting cyclicity in ecological time series, Ecology 96: 1724--1732
 }
 \author{
 Stilianos Louca

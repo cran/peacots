@@ -12,8 +12,8 @@ Calculate the periodogram of a time series, maximum-likelihood fit an Ornstein-U
 \tabular{ll}{
 Package: \tab peacots\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2014-10-26\cr
+Version: \tab 1.2\cr
+Date: \tab 2015-06-13\cr
 License: \tab GPL-3\cr
 }
 The OUSS is a parsimonious model for a stochastically fluctuating variable (e.g. population size) with linear stabilizing forces, subject to uncorrelated measurement errors. Periodogram peaks (putative periodicities) are evaluated against this null hypothesis. In contrast to the white noise null model (the classical null model against which cyclicity is often evaluated), the OUSS process accounts for non-zero correlations between measurements and corrects for the resulting increased power at low frequencies.
@@ -38,7 +38,7 @@ Use \code{\link{generate_ouss}} to generate random time series of a particular O
 Stilianos Louca
 }
 \references{
-Louca, S., Doebeli, M. - Detecting cyclicity in ecological time series (in review, as of June 2014)
+Louca, S., Doebeli, M. (2015) Detecting cyclicity in ecological time series, Ecology 96: 1724--1732
 }
 \keyword{ package }
 \keyword{ statistics }

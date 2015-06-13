@@ -36,7 +36,7 @@ plotReport(name="", times=NULL, signal=NULL,
 }
 }
 \references{
-Louca, S., Doebeli, M. - Detecting cyclicity in ecological time series (in review, as of June 2014)
+Louca, S., Doebeli, M. (2015) Detecting cyclicity in ecological time series, Ecology 96: 1724--1732
 }
 \author{
 Stilianos Louca

@@ -27,7 +27,7 @@ function(){
 	cat(sprintf("            Evaluating periodogram..\n"));
 
 	# find peak and estimate statistical significance
-	report 	= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=0, minFitFreq=0, accuracy=0.01, startRadius=2, verbose=TRUE);
+	report 	= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=0, minFitFreq=0, accuracy=0.01, startRadius=2, verbose=FALSE);
 
 	#plot periodogram
 	plot(ts(report$frequencies), ts(report$periodogram), xy.label=FALSE, type="l", ylab="power", xlab="frequency", main=sprintf("peacots periodogram analysis\n(peak freq=%.3g, P=%.2g, Plocal=%.2g)",report$frequencies[report$peakMode],report$P,report$Plocal), col="black", cex=0.8, cex.main=0.9);
@@ -56,7 +56,7 @@ function(){
 	# find peak and estimate statistical significance
 	# ignore frequencies lower than a pre-defined threshold to avoid masking by low-frequency maxima
 	minFreq = 0.5/cycleT;
-	report 	= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=minFreq, minFitFreq=minFreq, startRadius=2, accuracy=0.01, verbose=TRUE);
+	report 	= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=minFreq, minFitFreq=minFreq, startRadius=2, accuracy=0.01, verbose=FALSE);
 	
 	#plot periodogram
 	plot(ts(report$frequencies), ts(report$periodogram), xy.label=FALSE, type="l", ylab="power", xlab="frequency", main=sprintf("peacots periodogram analysis\nusing low-frequency trimming at threshold %.2g\n(peak freq=%.3g, P=%.2g, Plocal=%.2g)",minFreq,report$frequencies[report$peakMode],report$P,report$Plocal), col="black", cex=0.8, cex.main=0.9);
@@ -78,7 +78,7 @@ function(){
 	cat(sprintf("Example 03: Re-evaluating periodogram of previous example..\n"));
 	
 	# calculate periodogram and fit OUSS model
-	report 		= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=0, minFitFreq=0, startRadius=2, accuracy=0.01, verbose=TRUE);
+	report 		= peacots::evaluate.pm(times=times, signal=signal, minPeakFreq=0, minFitFreq=0, startRadius=2, accuracy=0.01, verbose=FALSE);
 	
 	# find which periodogram mode approximately corresponds to the frequency we are interested in
 	cycleMode 	= which(report$frequencies>=0.99/cycleT)[1]; 
