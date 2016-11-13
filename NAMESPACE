@@ -1,1 +1,5 @@
+importFrom("grDevices", "dev.copy2pdf")
+importFrom("graphics", "legend", "lines", "par", "plot")
+importFrom("stats", "rexp", "rnorm", "ts")
+importFrom("utils", "tail", "write.table")
 export(evaluate.pm,plotReport,significanceOfLocalPeak,runExample,evaluate.pm.wn,ps_ouss,ps_ouss_asymptotic,generate_ouss)

@@ -1,5 +1,5 @@
-5a1bae9d30ce07f50b8d6e2409ecf74b *DESCRIPTION
-cede4882f48d5bc2457f98c1bb316907 *NAMESPACE
+f8bacefb3fadc8c2ab21e9ce4b302387 *DESCRIPTION
+527f2d6664c48f79603baa7b8ca6b66e *NAMESPACE
 7acafa0ae8bb0e583ae7407e8cdac6d3 *R/LombScarglePeriodogram.R
 31a65e47839fbb0e51c2e8d44497dd02 *R/aux_trapezoid.R
 ec68315f9d708b9b2992e562420874e5 *R/evaluate.pm.R
@@ -12,7 +12,7 @@ f22fb9d70bf9cbbb96a4bbc3562fd07f *R/mlfit_ouss.R
 b812fdd4e7d47e9bc4200563e692f8ed *R/nll_ps_ouss.R
 15fdd336e3c454ed5db0a031faf16a0b *R/nll_ps_ouss_gradient.R
 b5dc4967261f34da097c048d50888267 *R/peakSignificance.R
-85f3461c18ed658aaaaab8530eb0c4df *R/plotReport.R
+94d541882a4c4dc7b2fcc29b1fb06906 *R/plotReport.R
 b278c27c80120fd69bbd2a991c46079a *R/power_o_to_sigma.R
 be4429c631896be4d7ea99fcd71c6629 *R/ps_ouss.R
 ca1d14c450473666f7aa61c29e8427a1 *R/ps_ouss_asymptotic.R

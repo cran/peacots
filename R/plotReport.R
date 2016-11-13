@@ -1,7 +1,7 @@
 plotReport <-
 function(name="", times=NULL, signal=NULL, report=NULL, plotFile=NULL, dataFile=NULL, sep=" "){
 	Nplots = sum(c(!is.null(times) && !is.null(signal), !is.null(report) && !report$error));
-	if(Nplots==0) return;
+	if(Nplots==0) return();
 	
 	old.par <- par(mfrow=c(1, Nplots))	
 	
