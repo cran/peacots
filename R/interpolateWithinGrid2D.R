@@ -10,8 +10,7 @@ function(grid_string, x, y, default_z){
 	NY 			= length(y_values);
 	NZ			= length(z_values);
 	if(length(z_values)!=NX*NY){
-		cat(sprintf("ERROR parsing grid string: NX=%d, NY=%d but NZ=%d != NX*NY=%d\n",NX,NY,NZ,NX*NY));
-		return(0);
+		stop(sprintf("ERROR parsing grid string: NX=%d, NY=%d but NZ=%d != NX*NY=%d\n",NX,NY,NZ,NX*NY));
 	}
 	EPSILON		= 1e-5; # relative grid tolerance, mainly to circumvent rounding errors
 	

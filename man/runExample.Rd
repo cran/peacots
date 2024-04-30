@@ -8,8 +8,14 @@ Run example \code{evaluate.pm} analyses
 Generate random cyclic time series, analyse them using \code{\link{evaluate.pm}} and plot the results.
 }
 \usage{
-runExample()
+runExample(verbose=TRUE)
 }
+\arguments{
+\item{verbose}{
+Boolean, whether to print messages to the screen.
+}
+}
+\value{No return value.}
 \references{
 Louca, S., Doebeli, M. (2015) Detecting cyclicity in ecological time series, Ecology 96: 1724--1732
 }

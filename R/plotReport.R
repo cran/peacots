@@ -3,7 +3,9 @@ function(name="", times=NULL, signal=NULL, report=NULL, plotFile=NULL, dataFile=
 	Nplots = sum(c(!is.null(times) && !is.null(signal), !is.null(report) && !report$error));
 	if(Nplots==0) return();
 	
-	old.par <- par(mfrow=c(1, Nplots))	
+	oldpar = par(no.readonly = TRUE)
+	on.exit(par(oldpar))
+	par(mfrow=c(1, Nplots))	
 	
 	if(!is.null(times) && !is.null(signal)){
 		#plot time series
@@ -21,8 +23,6 @@ function(name="", times=NULL, signal=NULL, report=NULL, plotFile=NULL, dataFile=
 		legend((0.6*report$frequencies[1]+0.4*tail(report$frequencies,1)), (0.85*max(report$periodogram)), c("periodogram", "fitted OUSS"), lty=c(1,1), col=c("black", "red"), bty="n", cex=0.8)
 
 	}
-	
-	par(old.par)
 	
 	if(!is.null(plotFile)){
 		#save plot as PDF

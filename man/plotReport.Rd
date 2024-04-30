@@ -35,6 +35,7 @@ plotReport(name="", times=NULL, signal=NULL,
     Separator to be used for the data file. Only relevant if \code{dataFile} is not \code{NULL}.
 }
 }
+\value{No return value.}
 \references{
 Louca, S., Doebeli, M. (2015) Detecting cyclicity in ecological time series, Ecology 96: 1724--1732
 }
